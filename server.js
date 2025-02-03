@@ -11,7 +11,7 @@ const { server, io } = require('./socket.js');
 
 app.use(cookieParser());
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://ai-webdeveloper-frontend.onrender.com',
     credentials: true
 }))
 // const io = require('socket.io')(server,{
