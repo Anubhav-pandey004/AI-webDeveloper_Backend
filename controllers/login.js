@@ -32,7 +32,8 @@ module.exports = async (req, res) => {
 
             const tokenOption = {
                 httpOnly : true,
-                secure:true
+                secure:true,
+                sameSite: "None",
             }
 
             //cookie, passing token in cookie
