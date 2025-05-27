@@ -29,7 +29,7 @@ const generateResult = async (userMessage) => {
 
     // Add model response to history
     chatHistory.push({ role: "model", content: responseText });
-
+    console.log("result :",responseText);
     return responseText;
   } catch (error) {
     chatHistory = [];
