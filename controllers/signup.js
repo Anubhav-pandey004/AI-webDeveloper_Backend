@@ -2,7 +2,6 @@ const UserModel = require('../models/userModel')
 const bcrypt = require('bcrypt')
 
 module.exports = Signup =async(req,res)=>{
-    console.log("Signup",req.body);
     try {
         const {username, email, password} = req.body;
         if(!email){

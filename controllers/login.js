@@ -13,20 +13,18 @@ module.exports = async (req, res) => {
         if (!password) {
             return res.status(400).json({ message: 'Password is required', error: true, success: false });
         }
-
+        
         const user = await UserModel.findOne({ email }).select('+password');
 
         if (!user) {
             return res.status(404).json({ message: 'User not found', error: true, success: false });
         }
-
         const isMatch = await bcrypt.compare(password, user.password);
         if(isMatch){
             const tokendata = {
                 _id : user._id,
                 email : user.email
             }
-            // console.log("Checkpoint4...............",user._id);
             
          
             //token
@@ -36,7 +34,7 @@ module.exports = async (req, res) => {
                 httpOnly : true,
                 secure:true
             }
-            console.log(token,tokenOption);
+
             //cookie, passing token in cookie
             res.cookie("token",token,tokenOption).json({
                 message : "User signin successfully",

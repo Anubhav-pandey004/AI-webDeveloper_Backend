@@ -14,35 +14,6 @@ app.use(cors({
     origin: 'https://ai-webdeveloper-frontend.onrender.com',
     credentials: true
 }))
-// const io = require('socket.io')(server,{
-//     cors: {
-//         origin: 'http://localhost:5173',  // Allow frontend origin
-//         methods: ['GET', 'POST'],
-//         credentials: true  // Enable cookies to be sent with requests
-//     }
-// });
-
-// io.use((socket, next) => {
-//     console.log();
-    
-//     const token = socket.handshake.auth.token || socket.handshake.headers.authorization.split(' ')[1];
-//     if (!token) {
-//         return next(new Error("invalid user"));
-//     }
-//     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//     if(!decoded){
-//         return next(new Error("invalid user"));
-    
-//     }
-//     socket.user = decoded;
-//     next();
-// });
-// io.on('connection', socket => {
-//     console.log("a user connected");
-    
-//     socket.on('event', data => { /* … */ });
-// });
-
 
 app.use('/',router)
 

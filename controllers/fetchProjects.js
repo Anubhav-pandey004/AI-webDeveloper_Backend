@@ -1,7 +1,7 @@
 const Project = require("../models/project");
 module.exports=fetchProjects = async(req,res)=>{
   try {
-     console.log("fetch projects of user",req.body.user);
+
     
     const projects = await Project.find({
       $or: [
@@ -10,7 +10,6 @@ module.exports=fetchProjects = async(req,res)=>{
       ]
     }).populate('owner users');
     
-    console.log(projects);
     res.status(200).json({
         success: true,
         data: projects,

@@ -10,7 +10,7 @@ module.exports = saveProject = async(req,res)=>{
             { new: true }         // Return the updated document
         );
         
-        console.log("response ",response);
+
         
         res.status(200).json({
             success: true,

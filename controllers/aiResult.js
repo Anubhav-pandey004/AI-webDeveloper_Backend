@@ -1,9 +1,9 @@
 
 const generateResult = require('../google_ai')
+// const generateResult = require("../openai")
+// const generateResult = require("../llama")
 module.exports = async(req,res) =>{
     try {
-        console.log(req.body);
-        
         const prompt = req.body.prompt;
         const result = await generateResult(prompt);
         res.send(result)

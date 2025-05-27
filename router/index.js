@@ -13,7 +13,9 @@ const addColab = require('../controllers/addColab.js');
 const aiResult = require('../controllers/aiResult.js');
 const saveProject = require('../controllers/saveProject.js');
 const deleteProject = require('../controllers/deleteProject.js');
-
+const logout = require('../controllers/logout.js');
+const enhancePrompt = require('../controllers/enhancePrompt.js');
+const exportProject = require('../controllers/Download/exportProject.js')
 
 router
     .route('/login')
@@ -57,7 +59,19 @@ router
    
 router
    .route('/deleteProject')
-   .post(authtoken,wrapasync(deleteProject))   
+   .post(authtoken,wrapasync(deleteProject))  
+   
+router
+   .route('/logout')
+   .post(authtoken, wrapasync(logout))  
+   
+router
+   .route('/enhance')
+   .post(authtoken, wrapasync(enhancePrompt))   
+
+router
+   .route('/export')
+   .post(authtoken, wrapasync(exportProject))   
    
 module.exports = router;
 

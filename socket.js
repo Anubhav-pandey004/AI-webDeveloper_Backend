@@ -6,6 +6,8 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const projectModel = require("./models/project.js");
 const generateResult = require("./google_ai.js");
+// const generateResult = require("./openai.js")
+// const generateResult = require("./llama.js")
 
 const io = new Server(server, {
   cors: {
@@ -37,17 +39,14 @@ io.use(async(socket, next) => {
       next(); // check
     });
   } catch (error) {
-    console.log(error);
     return next(new Error("invalid user"));
   }
 });
 
 io.on("connection", (socket) => {
-  console.log("User connected:", socket.id);
 
   if (socket.project) {
     socket.join(socket.project._id.toString());
-    console.log("Joined room with project ID:", socket.project._id.toString());
   }
 
   socket.on("project-message", async(data) => {
@@ -56,8 +55,17 @@ io.on("connection", (socket) => {
 
     const aiIsPresentInMessages = message.includes("@ai");
     socket.broadcast.to(socket.project._id.toString()).emit("project-message-receive", data);
+    
     if (aiIsPresentInMessages) {
-      const prompt = message.replace("@ai", "");
+      let prompt = message.replace("@ai", "");
+      if (prompt.includes("create") || prompt.includes("make") || prompt.includes("react") || prompt.includes("node") || prompt.includes("project")) {
+        prompt += "\nIn react project index.html and vite.config.js should be in root directory.Create an App.jsx file as the main component. Ensure a main.jsx file exists in the src directory to initialize React.When multiple pages are required, create a pages/ folder in src.Use a components/ folder inside src to store reusable components.Apply Tailwind CSS for styling where applicable.Create backend only when required otherwise avoid making backend. In backend create Store sensitive credentials in a .env file when required Use MongoDB as the database, and always connect using this URI:'mongodb+srv://Anubhavpandey:xg3bVxJO5PGfKQXs@projectdb001.yfit8.mongodb.net/?retryWrites=true&w=majority&appName=ProjectDB001' . Implement proper API routes for CRUD operations. Enable CORS to allow frontend-backend communication. Use this base url when fetching data from backend 'https://k03e2io1v3fx9wvj0vr8qd5q58o56n-fkdo--3001--d20a0a75.local-corp.webcontainer-api.io'.Use Fetch to interact with backend "
+        prompt += "Follow a structured MERN stack architecture.Ensure the code is modular, well-commented, and follows best practices.If the project requires authentication, use JWT for secure login sessions."
+        if (data?.fileTree) {
+          prompt = `${prompt} This is my current project `
+          prompt += JSON.stringify(data.fileTree, null, 2);
+        }
+      }
       const result = await generateResult(prompt);
       
       // socket.to(socket.project._id.toString()).emit("project-message-receive", data);
@@ -75,12 +83,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", (reason) => {
-    console.log(`User disconnected: ${socket.id}, Reason: ${reason}`);
     socket.leave(socket.project._id.toString());
   });
 
   socket.on("connect_error", (err) => {
-    console.log(`Connection Error: ${err.message}`);
   });
 });
 module.exports = { server, io };

@@ -9,7 +9,7 @@ const model = genAI.getGenerativeModel({
 
 // Store chat history
 let chatHistory = [];
-
+// chatHistory.unshift({ role: "user", content: systemInstruction });
 const generateResult = async (userMessage) => {
   // Add user message to history
   try {
@@ -32,8 +32,7 @@ const generateResult = async (userMessage) => {
 
     return responseText;
   } catch (error) {
-    console.log(error);
-    
+    chatHistory = [];
   }
 };
 
