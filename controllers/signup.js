@@ -38,7 +38,7 @@ module.exports = Signup =async(req,res)=>{
     }
     } catch (error) {
         res.json({
-            message : err,
+            message : error,
             error : true,
             success : false,
         })
