@@ -11,7 +11,7 @@ const generateResult = require("./google_ai.js");
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["https://ai-webdeveloper-frontend.onrender.com"],
   },
 });
 
@@ -66,8 +66,9 @@ io.on("connection", (socket) => {
           prompt += JSON.stringify(data.fileTree, null, 2);
         }
       }
+      console.log(prompt);
       const result = await generateResult(prompt);
-      
+      console.log(result);
       // socket.to(socket.project._id.toString()).emit("project-message-receive", data);
       io.to(socket.project._id.toString()).emit("project-message-receive", {
         user : {
