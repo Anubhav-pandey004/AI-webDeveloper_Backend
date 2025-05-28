@@ -1,35 +1,39 @@
 const archiver = require("archiver");
+const Project = require("../../models/project");
 
-module.exports = exportProject = async (req, res) => {
+module.exports = async (req, res) => {
   try {
-    const projectId = req.body.ProjectId;
-    const project = await Project.findById(projectId);
+    const { ProjectId } = req.body;
+
+    const project = await Project.findById(ProjectId);
     if (!project || !project.fileTree) {
-      return res.status(404).json({ message: "Project not found", success: false });
+      return res.status(404).json({ success: false, message: "Project not found" });
     }
 
-    res.setHeader("Content-Type", "application/zip");
-    res.setHeader("Content-Disposition", `attachment; filename=${project.projectName}.zip`);
+    res.set({
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${project.projectName}.zip"`,
+    });
 
-    const archive = archiver("zip");
+    const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(res);
 
-    await zipFiles(archive, project.fileTree, "");
-    archive.finalize();
+    addFilesToArchive(archive, project.fileTree, "");
 
+    await archive.finalize();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Error exporting project", success: false });
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-async function zipFiles(archive, fileTree, basePath) {
+function addFilesToArchive(archive, fileTree, currentPath) {
   for (const [name, value] of Object.entries(fileTree)) {
-    const currentPath = basePath ? `${basePath}/${name}` : name;
+    const filePath = currentPath ? `${currentPath}/${name}` : name;
     if (value.content) {
-      archive.append(value.content, { name: currentPath });
+      archive.append(value.content, { name: filePath });
     } else {
-      await zipFiles(archive, value, currentPath);
+      addFilesToArchive(archive, value, filePath);
     }
   }
 }
