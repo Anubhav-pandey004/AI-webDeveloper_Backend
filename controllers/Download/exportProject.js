@@ -1,41 +1,39 @@
 const archiver = require("archiver");
-const path = require("path");
-const stream = require("stream");
 const Project = require("../../models/project");
 
 module.exports = async (req, res) => {
   try {
     const { ProjectId } = req.body;
-    const project = await Project.findById(ProjectId);
 
+    const project = await Project.findById(ProjectId);
     if (!project || !project.fileTree) {
-      return res.status(404).json({ message: "Project not found", error: true });
+      return res.status(404).json({ success: false, message: "Project not found" });
     }
 
-    res.setHeader("Content-Type", "application/zip");
-    res.setHeader("Content-Disposition", `attachment; filename=${project.projectName}.zip`);
+    res.set({
+      "Content-Type": "application/zip",
+      "Content-Disposition": `attachment; filename="${project.projectName}.zip"`,
+    });
 
     const archive = archiver("zip", { zlib: { level: 9 } });
     archive.pipe(res);
 
-    await addFilesToArchive(archive, project.fileTree, project.projectName);
+    addFilesToArchive(archive, project.fileTree, "");
 
-    archive.finalize(); // Finalize the ZIP file
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: "Internal server error", error: true });
+    await archive.finalize();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
-async function addFilesToArchive(archive, fileTree, basePath = "") {
-  for (const [key, value] of Object.entries(fileTree)) {
-    const fullPath = path.join(basePath, key);
-    if (typeof value === "object" && value !== null) {
-      if (value.content !== undefined) {
-        archive.append(value.content, { name: fullPath });
-      } else {
-        await addFilesToArchive(archive, value, fullPath);
-      }
+function addFilesToArchive(archive, fileTree, currentPath) {
+  for (const [name, value] of Object.entries(fileTree)) {
+    const filePath = currentPath ? `${currentPath}/${name}` : name;
+    if (value.content) {
+      archive.append(value.content, { name: filePath });
+    } else {
+      addFilesToArchive(archive, value, filePath);
     }
   }
 }
