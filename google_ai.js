@@ -11,6 +11,7 @@ const model = genAI.getGenerativeModel({
 let chatHistory = [];
 // chatHistory.unshift({ role: "user", content: systemInstruction });
 const generateResult = async (userMessage) => {
+  console.log("Generatig response ");
   // Add user message to history
   try {
     chatHistory.push({ role: "user", content: userMessage });
