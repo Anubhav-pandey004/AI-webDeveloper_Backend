@@ -11,7 +11,7 @@ const { server, io } = require('./socket.js');
 
 app.use(cookieParser());
 app.use(cors({
-    origin: 'https://ai-webdeveloper-frontend.onrender.com',
+    origin: 'https://ai-agent-web.netlify.app',
     credentials: true
 }))
 
