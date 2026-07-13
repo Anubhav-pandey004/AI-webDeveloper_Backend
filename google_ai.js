@@ -3,7 +3,7 @@ const { systemInstruction } = require("./prompt");
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_KEY);
 const model = genAI.getGenerativeModel({
-  model: "gemini-2.5-flash",
+  model: "gemini-flash-latest",
   systemInstruction: systemInstruction,
 });
 
