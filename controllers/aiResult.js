@@ -8,6 +8,7 @@ module.exports = async(req,res) =>{
         const result = await generateResult(prompt);
         res.send(result)
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             success: false,
             message: "Internal server error" 
