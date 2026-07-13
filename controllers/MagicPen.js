@@ -10,6 +10,7 @@ const model = genAI.getGenerativeModel({
 const EnhancedPromptgenerater = async (userMessage) => {
     try {
       const result = await model.generateContent(userMessage);
+      console.log(result)
       const responseText = result.response.text();  
       return responseText;
     } catch (error) {
